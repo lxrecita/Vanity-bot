@@ -1,6 +1,22 @@
 import discord
 from discord.ext import commands, tasks
 import os
+import datetime
+from flask import Flask
+from threading import Thread
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Vanity Bot está corriendo"
+
+def run():
+    app.run(host='0.0.0.0', port=8080)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
 
 # Cargar token desde variables de entorno
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -110,6 +126,8 @@ async def unlock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, overwrite=overwrite)
     msg = await ctx.send("🔓 Canal desbloqueado.")
     await msg.delete(delay=10)
+
+keep_alive()
 
 # Iniciar el bot
 bot.run(TOKEN)
